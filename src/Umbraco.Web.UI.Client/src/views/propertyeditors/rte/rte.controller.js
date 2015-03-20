@@ -139,8 +139,16 @@ angular.module("umbraco")
                                     //overwrite the baseline config item if it is an array, we want to concat the items in the array, otherwise
                                     //if it's an object it will overwrite the baseline
                                     if (angular.isArray(baseLineConfigObj[i]) && angular.isArray(tinyMceConfig.customConfig[i])) {
-                                        //concat it and below this concat'd array will overwrite the baseline in angular.extend
-                                        tinyMceConfig.customConfig[i] = baseLineConfigObj[i].concat(tinyMceConfig.customConfig[i]);
+                                        // if element is a style format then move the umbraco generated style to their own heading so
+                                        // that they do not mess with peoples tinyMCEconfig.config settings.
+                                        if (i == "style_formats") {
+                                            var nestedMenu = [{ title: "Custom", items: baseLineConfigObj[i] }];
+                                            tinyMceConfig.customConfig[i] = tinyMceConfig.customConfig[i].concat(nestedMenu);
+                                        }
+                                        else {
+                                            //concat it and below this concat'd array will overwrite the baseline in angular.extend
+                                            tinyMceConfig.customConfig[i] = baseLineConfigObj[i].concat(tinyMceConfig.customConfig[i]);
+                                        }
                                     }
                                 }
                                 catch (e) {
